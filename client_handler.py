@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import time
 import json
 import threading
 import logging
@@ -31,14 +32,43 @@ class ClientHandler (threading.Thread):
 
   def get_status(self):
     status = DoorController.get_status()
-    obj = {}
-    obj['Open'] = status
-    obj['LastChanged'] = 0
-    obj['ChangedByClient'] = True
-
-    s = json.dumps(obj)
-    self.sock.send(s)
-    logging.info('Sent message: {}'.format(s))
+    self.send_status(status, 0, True)
 
   def set_door(self, newState):
-    DoorController.set_status(newState)
+    if newState == 2:
+      self.open_door()
+    else:
+      self.close_door()
+
+  def close_door(self):
+    DoorController.set_status(False)
+
+    while DoorController.get_status() == 2:
+      time.sleep(0.1)
+    self.send_status(-1, 0, True)
+
+    while DoorController.get_status() == 0:
+      time.sleep(0.1)
+    self.send_status(-2, 0, True)
+
+  def open_door(self):
+    DoorController.set_status(True)
+
+    while DoorController.get_status() == -2:
+      time.sleep(0.1)
+    self.send_status(1, 0, True)
+
+    while DoorController.get_status() == 0:
+      time.sleep(0.1)
+    self.send_status(2, 0, True)
+
+  def send_status(self, status, lastChanged, byClient):
+    obj = {}
+    obj['Status'] = status
+    obj['LastChanged'] = lastChanged
+    obj['ChangedByClient'] = byClient
+    
+    s = json.dumps(obj)
+    s += '\n'
+    self.sock.send(s)
+    logging.info('Sent message: {}'.format(s))
