@@ -24,10 +24,10 @@ cp init.d/$NAME /etc/init.d
 chmod +x $INSTALL_DIR/$NAME
 chmod +x init.d/$NAME /etc/init.d
 
-mkdir /var/log/$NAME &>/dev/null
+mkdir /var/log/$USER &>/dev/null
 
-chown $USER /var/log/$NAME
-chgrp $USER /var/log/$NAME
+chown $USER /var/log/$USER
+chgrp $USER /var/log/$USER
 
 update-rc.d -f $NAME defaults
 
