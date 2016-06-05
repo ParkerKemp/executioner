@@ -14,7 +14,7 @@ function proc_running {
     return 1
   fi
   PID=`cat $1`
-  if [ -z "`ps axf | grep $PID | grep -v grep`" ]; then
+  if [ -z "`ps axf | sed 's/\s\+/ /g' | sed 's/^\s//g' | cut -d' ' -f1 | grep ^$PID$`" ]; then
     return 1
   else
     return 0
@@ -35,7 +35,7 @@ start)
     echo $NAME is already running!
   else
     cd $DAEMONPATH
-    sudo -u $USER $NAME &>/dev/null &
+    sudo -u $USER $NAME &>/var/log/executioner/exec.out &
     PID=$!
     if [ -z $PID ]; then
       echo Failed!
