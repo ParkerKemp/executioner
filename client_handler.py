@@ -23,7 +23,7 @@ class ClientHandler (threading.Thread):
       if intent == 'status':
         self.get_status()
       elif intent == 'set':
-        newState = obj['data']
+        newState = obj['Data']
         self.set_door(newState)
     except ValueError as err:
       logging.error('Error decoding message: {}.'.format(message))
@@ -38,6 +38,7 @@ class ClientHandler (threading.Thread):
 
     s = json.dumps(obj)
     self.sock.send(s)
+    logging.info('Sent message: {}'.format(s))
 
   def set_door(self, newState):
     DoorController.set_status(newState)

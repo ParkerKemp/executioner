@@ -12,7 +12,7 @@ class DoorController:
   def get_status():
     try:
       f = open('/var/local/executioner/status', 'r')
-      status = f.read()
+      status = f.read().strip()
       return status == "1"
     except IOError as e:
       logging.error('I/O error while reading status file: {}.'.format(e))
