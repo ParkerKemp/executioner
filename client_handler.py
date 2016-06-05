@@ -2,6 +2,7 @@
 
 import json
 import threading
+import logging
 from door_controller import DoorController
 
 class ClientHandler (threading.Thread):
@@ -24,7 +25,7 @@ class ClientHandler (threading.Thread):
       elif intent == 'set':
         newState = obj['data']
         self.set_door(newState)
-    except JsonDecodeError as err:
+    except ValueError as err:
       logging.error('Error decoding message: {}.'.format(message))
       return None
 

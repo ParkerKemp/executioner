@@ -2,6 +2,7 @@
 
 import socket
 import logging
+from client_handler import ClientHandler
 
 listenPort = 7654
 
