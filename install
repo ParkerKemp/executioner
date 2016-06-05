@@ -1,0 +1,34 @@
+#!/bin/bash
+
+function create_user(){
+  useradd -p $(openssl passwd -1 $USER) $USER
+}
+
+#Magic "cd to script directory" command
+cd "${0%/*}"
+
+USER=executioner
+NAME=executionerd
+INSTALL_DIR=/usr/bin
+
+#Create a new user if it doesn't exist
+id -u $USER >/dev/null || create_user
+
+chmod -R o+w .
+
+su $USER -c "pyinstaller -Fn $NAME main.py"
+
+cp dist/$NAME $INSTALL_DIR
+cp init.d/$NAME /etc/init.d
+
+chmod +x $INSTALL_DIR/$NAME
+chmod +x init.d/$NAME /etc/init.d
+
+mkdir /var/log/$NAME &>/dev/null
+
+chown $USER /var/log/$NAME
+chgrp $USER /var/log/$NAME
+
+update-rc.d -f $NAME defaults
+
+chmod -R o-w .

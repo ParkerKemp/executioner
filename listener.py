@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import socket
+import logging
 
 listenPort = 7654
 

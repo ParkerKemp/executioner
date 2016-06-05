@@ -31,11 +31,10 @@ class ClientHandler (threading.Thread):
   def get_status(self):
     status = DoorController.get_status()
     obj = {}
-    obj['response'] = 'success'
-    if status:
-      obj['status'] = 'open'
-    else:
-      obj['status'] = 'closed'
+    obj['Open'] = status
+    obj['LastChanged'] = 0
+    obj['ChangedByClient'] = True
+
     s = json.dumps(obj)
     self.sock.send(s)
 
