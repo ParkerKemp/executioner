@@ -19,10 +19,9 @@ chmod -R o+w .
 su $USER -c "pyinstaller -Fn $NAME main.py"
 
 cp dist/$NAME $INSTALL_DIR
-cp init.d/$NAME /etc/init.d
+cp init/$NAME.conf /etc/init
 
 chmod +x $INSTALL_DIR/$NAME
-chmod +x init.d/$NAME /etc/init.d
 
 mkdir /var/log/$USER &>/dev/null
 chown $USER /var/log/$USER
@@ -32,6 +31,6 @@ mkdir /var/local/$USER &>/dev/null
 chown $USER /var/local/$USER
 chgrp $USER /var/local/$USER
 
-update-rc.d -f $NAME defaults
+initctl reload-configuration
 
 chmod -R o-w .
