@@ -8,7 +8,7 @@ function create_user(){
 cd "${0%/*}"
 
 USER=executioner
-NAME=executionerd
+NAME=executioner
 INSTALL_DIR=/usr/bin
 
 #Create a new user if it doesn't exist
