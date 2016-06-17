@@ -35,7 +35,7 @@ class ClientHandler (threading.Thread):
     self.send_status(status, 0, True)
 
   def set_door(self, newState):
-    if newState == 2:
+    if newState == "2":
       self.open_door()
     else:
       self.close_door()
