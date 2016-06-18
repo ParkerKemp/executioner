@@ -9,6 +9,7 @@ cd "${0%/*}"
 
 USER=executioner
 NAME=executioner
+MANAGERNAME=executioner-manager
 INSTALL_DIR=/usr/bin
 
 #Create a new user if it doesn't exist
@@ -19,7 +20,9 @@ chmod -R o+w .
 su $USER -c "pyinstaller -Fn $NAME main.py"
 
 cp dist/$NAME $INSTALL_DIR
-cp init.d/$NAME /etc/init.d
+#cp init.d/$NAME /etc/init.d
+cp systemd/$MANAGERNAME $INSTALL_DIR
+cp systemd/$NAME.service /etc/systemd/system
 
 chmod +x $INSTALL_DIR/$NAME
 chmod +x init.d/$NAME /etc/init.d
@@ -27,11 +30,15 @@ chmod +x init.d/$NAME /etc/init.d
 mkdir /var/log/$USER &>/dev/null
 chown $USER /var/log/$USER
 chgrp $USER /var/log/$USER
+chmod g+ws /var/log/$USER
+setfacl -Rm default:g::rw /var/log/$USER
 
 mkdir /var/local/$USER &>/dev/null
 chown $USER /var/local/$USER
 chgrp $USER /var/local/$USER
 
-update-rc.d -f $NAME defaults
+#update-rc.d -f $NAME defaults
+
+systemctl enable $NAME.service
 
 chmod -R o-w .

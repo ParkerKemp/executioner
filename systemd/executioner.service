@@ -1,0 +1,9 @@
+[Unit]
+Description=Executioner for chicken guillotine
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/executioner
+
+[Install]
+WantedBy=multi-user.target
