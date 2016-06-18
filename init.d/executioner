@@ -1,0 +1,79 @@
+#! /bin/bash
+### BEGIN INIT INFO
+# Provides:          executionerd
+# Required-Start:    $network
+# Required-Stop:     $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Controller for chicken guillotine (door).
+# Description:       Starts/Stops/Restarts the executioner daemon.
+### END INIT INFO
+
+function proc_running {
+  if [ ! -f $1 ]; then
+    return 1
+  fi
+  PID=`cat $1`
+  if [ -z "`ps axf | sed 's/\s\+/ /g' | sed 's/^\s//g' | cut -d' ' -f1 | grep ^$PID$`" ]; then
+    return 1
+  else
+    return 0
+  fi
+}
+
+set -e
+
+NAME=executioner
+DAEMONPATH=/usr/bin
+PIDFILE=/var/run/$NAME.pid
+USER=executioner
+
+case "$1" in
+start)
+  echo Starting $NAME...
+  if proc_running $PIDFILE ; then
+    echo $NAME is already running!
+  else
+    cd $DAEMONPATH
+    sudo -u $USER $NAME &>/var/log/executioner/exec.out &
+    PID=$!
+    if [ -z $PID ]; then
+      echo Failed!
+    else
+      echo $PID > $PIDFILE
+      echo Ok
+    fi
+  fi
+;;
+status)
+  echo Checking status of $NAME...
+  if [ -f $PIDFILE ]; then
+    if proc_running $PIDFILE ; then
+      echo Running
+    else
+      echo Process crashed at an unknown time
+    fi
+  else
+    echo Stopped
+  fi
+;;
+stop)
+  echo Stopping $NAME...
+  PID=`cat $PIDFILE`
+  cd $DAEMONPATH
+  if [ -f $PIDFILE ]; then
+    kill $PID
+    echo Ok
+    rm -f $PIDFILE
+  else
+    echo pid file not found
+  fi
+;;
+restart)
+  $0 stop
+  $0 start
+;;
+*)
+  echo Usage: $0 {status|start|stop|restart}
+  exit 1
+esac
