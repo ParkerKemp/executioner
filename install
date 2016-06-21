@@ -15,7 +15,7 @@ INSTALL_DIR=/usr/bin
 #Create a new user if it doesn't exist
 id -u $USER >/dev/null || create_user
 
-chmod -R o+w .
+chmod -R go+w .
 
 su $USER -c "pyinstaller -Fn $NAME main.py"
 
@@ -34,11 +34,13 @@ chmod g+ws /var/log/$USER
 setfacl -Rm default:g::rw /var/log/$USER
 
 mkdir /var/local/$USER &>/dev/null
-chown $USER /var/local/$USER
-chgrp $USER /var/local/$USER
+echo 0 >/var/local/$USER/top_switch
+echo 0 >/var/local/$USER/bottom_switch
+chown -R $USER /var/local/$USER
+chgrp -R $USER /var/local/$USER
 
 #update-rc.d -f $NAME defaults
 
 systemctl enable $NAME.service
 
-chmod -R o-w .
+chmod -R go-w .

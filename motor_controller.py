@@ -3,15 +3,19 @@ from time import sleep
  
 GPIO.setmode(GPIO.BOARD)
 
-class Motor:
+class MotorController:
 
-    def __init__(self, pinForward, pinBackward, pinControl):
+    def __init__(self):
         """ Initialize the motor with its control pins and start pulse-width
              modulation """
 
-        self.pinForward = pinForward
-        self.pinBackward = pinBackward
-        self.pinControl = pinControl
+        #self.pinForward = pinForward
+        #self.pinBackward = pinBackward
+        #self.pinControl = pinControl
+        self.pinForward = 16
+        self.pinBackward = 22
+        self.pinControl = 18
+        GPIO.setmode(GPIO.BOARD)
         GPIO.setup(self.pinForward, GPIO.OUT)
         GPIO.setup(self.pinBackward, GPIO.OUT)
         GPIO.setup(self.pinControl, GPIO.OUT)
@@ -40,13 +44,5 @@ class Motor:
         self.pwm_forward.ChangeDutyCycle(0)
         self.pwm_backward.ChangeDutyCycle(0)
 
-motor = Motor(16, 22, 18)
-
-# Motor test
-motor.forward(90)
-sleep(5)
-motor.backward(50)
-sleep(5)
-motor.stop()
-
-GPIO.cleanup()
+    def cleanup(self):
+      GPIO.cleanup()
