@@ -5,6 +5,7 @@ import json
 import threading
 import logging
 from door_controller import DoorController
+from configuration import DoorStatus
 
 class ClientHandler (threading.Thread):
   def __init__(self, sock):
@@ -25,7 +26,7 @@ class ClientHandler (threading.Thread):
         self.get_status()
       elif intent == 'set':
         newState = obj['Data']
-        self.set_door(newState)
+        self.set_door(int(newState))
     except ValueError as err:
       logging.error('Error decoding message: {}.'.format(message))
       return None
@@ -35,32 +36,30 @@ class ClientHandler (threading.Thread):
     self.send_status(status, 0, True)
 
   def set_door(self, newState):
-    if newState == "2":
+    if newState == DoorStatus.Open:
       self.open_door()
     else:
       self.close_door()
 
   def close_door(self):
-    DoorController.set_status(False)
+    logging.info('Closing door')
+    DoorController.set_status(DoorStatus.Closed)
+    self.send_status(DoorStatus.Changing, 0, True)
 
-    while DoorController.get_status() == 2:
+    logging.info('Waiting on status')
+    while DoorController.get_status() == DoorStatus.Changing:
       time.sleep(0.1)
-    self.send_status(-1, 0, True)
 
-    while DoorController.get_status() == 0:
-      time.sleep(0.1)
-    self.send_status(-2, 0, True)
+    logging.info('Sending final status')
+    self.send_status(DoorStatus.Closed, 0, True)
 
   def open_door(self):
-    DoorController.set_status(True)
+    DoorController.set_status(DoorStatus.Open)
+    self.send_status(DoorStatus.Changing, 0, True)
 
-    while DoorController.get_status() == -2:
+    while DoorController.get_status() == DoorStatus.Changing:
       time.sleep(0.1)
-    self.send_status(1, 0, True)
-
-    while DoorController.get_status() == 0:
-      time.sleep(0.1)
-    self.send_status(2, 0, True)
+    self.send_status(DoorStatus.Open, 0, True)
 
   def send_status(self, status, lastChanged, byClient):
     obj = {}

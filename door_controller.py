@@ -1,7 +1,13 @@
 #!/usr/bin/env python
 
 import logging
-from door_simulator import DoorSimulator
+from motor_controller import MotorController
+from switch_simulator import SwitchSimulator
+from configuration import DoorStatus
+from configuration import Config
+from switch_controller import SwitchController
+
+from time import sleep
 
 class DoorController:
   #status == True when open
@@ -11,38 +17,38 @@ class DoorController:
 
   @staticmethod
   def get_status():
-    top = DoorController.get_top_switch()
-    bottom = DoorController.get_bottom_switch()
-    if top: #Top switch is open
-      return 2
-    elif bottom: #Top closed, bottom open
-      return 0
-    else: #Both switches closed
-      return -2
+      #return SwitchController.get_status()
+    state = DoorController.get_switch_state()
+    if state:
+      return DoorStatus.Closed 
+    else:
+      return DoorStatus.Open
+
+    return state
 
   @staticmethod
-  def get_top_switch():
+  def get_switch_state():
     try:
-      f = open('/var/local/executioner/top_switch', 'r')
+      f = open('/var/local/executioner/switch', 'r')
       status = f.read().strip()
       return status == "1"
     except IOError as e:
-      logging.error('I/O error while reading top switch: {}.'.format(e))
+      logging.error('I/O error while reading switch: {}.'.format(e))
       return False
 
-  @staticmethod
-  def get_bottom_switch():
-    try:
-      f = open('/var/local/executioner/bottom_switch', 'r')
-      status = f.read().strip()
-      return status == "1"
-    except IOError as e:
-      logging.error('I/O error while reading bottom switch: {}.'.format(e))
-      return False
-
-  
   @staticmethod
   def set_status(newStatus):
-    sim = DoorSimulator(newStatus)
-    sim.start()
+    switch = SwitchSimulator(newStatus)
+    
+    switch.start()
 
+    if newStatus == DoorStatus.Closed:
+      MotorController.energize_down()
+      
+      while DoorController.get_status() == DoorStatus.Open:
+        sleep(0.01)
+    else:
+      MotorController.energize_up()
+      sleep(Config.UpDuration)
+
+    MotorController.halt()

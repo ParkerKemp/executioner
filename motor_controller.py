@@ -1,48 +1,45 @@
 import RPi.GPIO as GPIO
 from time import sleep
- 
-GPIO.setmode(GPIO.BOARD)
+
+import logging
 
 class MotorController:
 
-    def __init__(self):
-        """ Initialize the motor with its control pins and start pulse-width
-             modulation """
+  pinUp1 = 11
+  pinUp2 = 13 
 
-        #self.pinForward = pinForward
-        #self.pinBackward = pinBackward
-        #self.pinControl = pinControl
-        self.pinForward = 16
-        self.pinBackward = 22
-        self.pinControl = 18
-        GPIO.setmode(GPIO.BOARD)
-        GPIO.setup(self.pinForward, GPIO.OUT)
-        GPIO.setup(self.pinBackward, GPIO.OUT)
-        GPIO.setup(self.pinControl, GPIO.OUT)
-        self.pwm_forward = GPIO.PWM(self.pinForward, 100)
-        self.pwm_backward = GPIO.PWM(self.pinBackward, 100)
-        self.pwm_forward.start(0)
-        self.pwm_backward.start(0)
-        GPIO.output(self.pinControl,GPIO.HIGH) 
+  pinDown1 = 15
+  pinDown2 = 19 
 
-    def forward(self, speed):
-        """ pinForward is the forward Pin, so we change its duty
-             cycle according to speed. """
-        self.pwm_backward.ChangeDutyCycle(0)
-        self.pwm_forward.ChangeDutyCycle(speed)    
+  @staticmethod
+  def init():
+    GPIO.setmode(GPIO.BOARD)
 
-    def backward(self, speed):
-        """ pinBackward is the forward Pin, so we change its duty
-             cycle according to speed. """
+    GPIO.setup(MotorController.pinUp1, GPIO.OUT)
+    GPIO.setup(MotorController.pinUp2, GPIO.OUT)
 
-        self.pwm_forward.ChangeDutyCycle(0)
-        self.pwm_backward.ChangeDutyCycle(speed)
+    GPIO.setup(MotorController.pinDown1, GPIO.OUT)
+    GPIO.setup(MotorController.pinDown2, GPIO.OUT)
 
-    def stop(self):
-        """ Set the duty cycle of both control pins to zero to stop the motor. """
+    MotorController.halt()
 
-        self.pwm_forward.ChangeDutyCycle(0)
-        self.pwm_backward.ChangeDutyCycle(0)
+  @staticmethod
+  def cleanup():
+    GPIO.cleanup()
 
-    def cleanup(self):
-      GPIO.cleanup()
+  @staticmethod
+  def energize_up():
+    GPIO.output(MotorController.pinUp1, GPIO.LOW)
+    GPIO.output(MotorController.pinUp2, GPIO.LOW)
+
+  @staticmethod
+  def energize_down():
+    GPIO.output(MotorController.pinDown1, GPIO.LOW)
+    GPIO.output(MotorController.pinDown2, GPIO.LOW)
+
+  @staticmethod
+  def halt():
+    GPIO.output(MotorController.pinUp1, GPIO.HIGH)
+    GPIO.output(MotorController.pinUp2, GPIO.HIGH)
+    GPIO.output(MotorController.pinDown1, GPIO.HIGH)
+    GPIO.output(MotorController.pinDown2, GPIO.HIGH)
