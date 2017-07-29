@@ -15,11 +15,11 @@ class MotorController:
   def init():
     GPIO.setmode(GPIO.BOARD)
 
-    GPIO.setup(MotorController.pinUp1, GPIO.OUT)
-    GPIO.setup(MotorController.pinUp2, GPIO.OUT)
+    GPIO.setup(MotorController.pinUp1, GPIO.OUT, initial=GPIO.HIGH)
+    GPIO.setup(MotorController.pinUp2, GPIO.OUT, initial=GPIO.HIGH)
 
-    GPIO.setup(MotorController.pinDown1, GPIO.OUT)
-    GPIO.setup(MotorController.pinDown2, GPIO.OUT)
+    GPIO.setup(MotorController.pinDown1, GPIO.OUT, initial=GPIO.HIGH)
+    GPIO.setup(MotorController.pinDown2, GPIO.OUT, initial=GPIO.HIGH)
 
     MotorController.halt()
 
