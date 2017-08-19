@@ -17,7 +17,7 @@ class DoorController:
 
   @staticmethod
   def get_status():
-      #return SwitchController.get_status()
+    return SwitchController.get_status()
     state = DoorController.get_switch_state()
     if state:
       return DoorStatus.Closed 

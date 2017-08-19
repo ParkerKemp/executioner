@@ -13,12 +13,12 @@ class SwitchController:
     def init():
         GPIO.setmode(GPIO.BOARD)
 
-        GPIO.setup(SwitchController.statusPin, GPIO.IN)
+        GPIO.setup(SwitchController.statusPin, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
     @staticmethod
     def get_status():
         if(GPIO.input(SwitchController.statusPin)):
-            return DoorStatus.Closed
-        else:
             return DoorStatus.Open
+        else:
+            return DoorStatus.Closed
 
