@@ -5,11 +5,11 @@ import logging
 
 class MotorController:
 
-  pinUp1 = 11
-  pinUp2 = 13 
+  pinUp1 = 15
+  pinUp2 = 19 
 
-  pinDown1 = 15
-  pinDown2 = 19 
+  pinDown1 = 11
+  pinDown2 = 13 
 
   @staticmethod
   def init():

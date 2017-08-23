@@ -38,9 +38,9 @@ class DoorController:
 
   @staticmethod
   def set_status(newStatus):
-    switch = SwitchSimulator(newStatus)
+    #switch = SwitchSimulator(newStatus)
     
-    switch.start()
+    #switch.start()
 
     if newStatus == DoorStatus.Closed:
       MotorController.energize_down()
