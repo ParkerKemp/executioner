@@ -11,18 +11,15 @@ class Listener:
         self.sock = self.__open_socket()
   
     def start(self):
-        try:
-            logging.info('Listening on port {}.'.format(listenPort))
-            while True:
-                try:
-                    (clientSock, (address, port)) = self.sock.accept()
-                    logging.info('Connecting to {}.'.format(address))
-                    clientHandler = ClientHandler(clientSock)
-                    clientHandler.start()
-                except socket.error as err:
-                    logging.error('Encountered socket error: {}.'.format(err))
-        finally:
-            GPIO.close()
+        logging.info('Listening on port {}.'.format(listenPort))
+        while True:
+            try:
+                (clientSock, (address, port)) = self.sock.accept()
+                logging.info('Connecting to {}.'.format(address))
+                clientHandler = ClientHandler(clientSock)
+                clientHandler.start()
+            except socket.error as err:
+                logging.error('Encountered socket error: {}.'.format(err))
 
     def __open_socket(self):
         try:
