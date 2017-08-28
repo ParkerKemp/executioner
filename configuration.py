@@ -1,5 +1,6 @@
 class Config:
-  UpDuration = 3
+  MaxUpDuration = 2
+  MaxDownDuration = 2
 
 class DoorStatus:
   Open = 1

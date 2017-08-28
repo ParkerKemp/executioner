@@ -6,6 +6,9 @@ import threading
 import logging
 from door_controller import DoorController
 from configuration import DoorStatus
+from threading import Lock
+
+mutex = Lock()
 
 class ClientHandler (threading.Thread):
   def __init__(self, sock):
@@ -36,10 +39,14 @@ class ClientHandler (threading.Thread):
     self.send_status(status, 0, True)
 
   def set_door(self, newState):
-    if newState == DoorStatus.Open:
-      self.open_door()
-    else:
-      self.close_door()
+    mutex.acquire()
+    try:
+      if newState == DoorStatus.Open:
+        self.open_door()
+      else:
+        self.close_door()
+    finally:
+      mutex.release()
 
   def close_door(self):
     logging.info('Closing door')

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import logging
+import time
 from motor_controller import MotorController
 from switch_simulator import SwitchSimulator
 from configuration import DoorStatus
@@ -45,10 +46,11 @@ class DoorController:
     if newStatus == DoorStatus.Closed:
       MotorController.energize_down()
       
-      while DoorController.get_status() == DoorStatus.Open:
+      currentTime = time.time()
+      while DoorController.get_status() == DoorStatus.Open and time.time() < currentTime + Config.MaxDownDuration:
         sleep(0.01)
     else:
       MotorController.energize_up()
-      sleep(Config.UpDuration)
+      sleep(Config.MaxUpDuration)
 
     MotorController.halt()
