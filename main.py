@@ -16,15 +16,12 @@ def main():
     #signal.signal(signal.SIGINT, handle_signal)
     #signal.signal(signal.SIGTERM, handle_signal)
 
-    try:
-        sys.stdout = LoggerWriter(logging.info)
-        sys.stderr = LoggerWriter(logging.error)
-        MotorController.init()
-        SwitchController.init()
-        listener = Listener()
-        listener.start()
-    finally:
-      #close()
+    sys.stdout = LoggerWriter(logging.info)
+    sys.stderr = LoggerWriter(logging.error)
+    MotorController.init()
+    SwitchController.init()
+    listener = Listener()
+    listener.start()
 
 def handle_signal(signum, stack):
     close()

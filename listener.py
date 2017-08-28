@@ -29,4 +29,5 @@ class Listener:
             sock.listen(25)
             return sock
         except socket.error as err:
+            print err
             return None
